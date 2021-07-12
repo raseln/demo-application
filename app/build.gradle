@@ -93,4 +93,7 @@ dependencies {
 
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+
+    //Swipe Refresh
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swipe_refresh_version"
 }

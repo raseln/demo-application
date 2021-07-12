@@ -2,13 +2,13 @@ package com.rasel.demoapplication.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.rasel.demoapplication.adapters.ImageGalleryAdapter
 import com.rasel.demoapplication.data.api.ApiClientManager
 import com.rasel.demoapplication.data.repositories.PexelImageRepository
 import com.rasel.demoapplication.databinding.ActivityMainBinding
+import com.rasel.demoapplication.utils.EndlessScrollListener
 import com.rasel.demoapplication.utils.Toaster.showToast
 import com.rasel.demoapplication.viewmodels.MainViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var imageAdapter: ImageGalleryAdapter
+    private lateinit var scrollListener: EndlessScrollListener
     private val viewModel: MainViewModel by lazy {
         val repository = PexelImageRepository(
             ApiClientManager.pexelApiService, Dispatchers.IO
@@ -32,26 +33,21 @@ class MainActivity : AppCompatActivity() {
 
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
+        viewModel.currentPage = 1
+        viewModel.isLastPage = false
 
         //Initialize recyclerView with empty data
         setRecyclerview()
         setupObservers()
 
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                if (!query.isNullOrEmpty()) {
-                    getSearchedImages(query)
-                }
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
-        })
-
         //Get default images on init
         viewModel.getSearchedPhotos("nature")
+
+        binding.swipeRefresh.setOnRefreshListener {
+            scrollListener.resetValues()
+            val query: String = binding.searchView.query.toString()
+            viewModel.getSearchedPhotos(query, true)
+        }
     }
 
     private fun setRecyclerview() {
@@ -67,24 +63,45 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        scrollListener = object : EndlessScrollListener(layoutManager) {
+            override fun onLoadMore(currentPage: Int) {
+                if (viewModel.photoList.isNotEmpty() && !viewModel.isLastPage) {
+                    viewModel.currentPage = currentPage
+                    binding.swipeRefresh.isRefreshing = true
+                    viewModel.getSearchedPhotos(viewModel.currentQuery)
+                }
+            }
+        }
+        binding.recyclerView.addOnScrollListener(scrollListener)
+
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = imageAdapter
     }
 
-    private fun getSearchedImages(query: String) {
-        viewModel.getSearchedPhotos(query)
-    }
-
     private fun setupObservers() {
         viewModel.error.observe(this, { error ->
+            binding.swipeRefresh.isRefreshing = false
             if (!error.isNullOrEmpty()) {
                 showToast(this, error)
             }
         })
 
         viewModel.photoListLiveData.observe(this, { response ->
-            imageAdapter.list = response?.photos ?: listOf()
+            binding.swipeRefresh.isRefreshing = false
+            if (viewModel.currentPage == 1) {
+                viewModel.photoList.clear()
+                response?.photos?.let { viewModel.photoList.addAll(it) }
+            } else {
+                response?.photos?.let { viewModel.photoList.addAll(it) }
+            }
+            imageAdapter.list = viewModel.photoList
             imageAdapter.notifyDataSetChanged()
+            if (response?.nextPage.isNullOrEmpty()) {
+                viewModel.isLastPage = true
+            } else {
+                viewModel.currentPage++
+            }
         })
     }
 }

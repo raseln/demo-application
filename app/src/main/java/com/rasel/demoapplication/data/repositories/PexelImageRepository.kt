@@ -23,10 +23,10 @@ class PexelImageRepository(
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    suspend fun getSearchPhotos(query: String) =
+    suspend fun getSearchPhotos(query: String, pageNo: Int) =
         withContext(dispatcher) {
             try {
-                val response = apiService.searchImages(query)
+                val response = apiService.searchImages(query, numPage = pageNo)
                 if (response.isSuccessful) {
                     _photoListLiveData.postValue(response.body())
                     _error.postValue(null)

@@ -17,12 +17,3 @@ class ImageGalleryViewHolder(private val binding: LayoutImageCellBinding): Recyc
         binding.executePendingBindings()
     }
 }
-
-@BindingAdapter("photoUrl")
-fun showPhoto(imageView: ImageView, url: String?) {
-    url?.let {
-        Glide.with(imageView)
-            .load(it)
-            .into(imageView)
-    }
-}

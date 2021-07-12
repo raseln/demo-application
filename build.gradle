@@ -54,4 +54,5 @@ project.ext {
     //Hosts
     pexel_base_url = "https://api.pexels.com/v1/"
     //api key -> 563492ad6f91700001000001938c24e943a74c82904f73b0d1de1c70
+    swipe_refresh_version = "1.1.0"
 }
