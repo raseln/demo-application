@@ -37,7 +37,7 @@ class MainViewModel(private val repository: PexelImageRepository): ViewModel() {
             }
         }
         viewModelScope.launch {
-            repository.getSearchPhotos(query, currentPage)
+            repository.getSearchPhotos(currentQuery, currentPage)
         }
     }
 }

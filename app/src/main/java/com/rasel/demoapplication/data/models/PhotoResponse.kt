@@ -7,7 +7,7 @@ import com.squareup.moshi.JsonClass
 data class PhotoResponse(
     val photos: List<Photo>,
     @Json(name = "next_page")
-    val nextPage: String,
+    val nextPage: String?,
     val page: Int,
     @Json(name = "per_page")
     val perPage: Int,

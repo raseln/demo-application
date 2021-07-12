@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="com.rasel.demoapplication.viewmodels.MainViewModel" />
@@ -22,6 +24,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:setOnQueryTextListener="@{viewModel.searchPhotos}" />
+
+        <TextView
+            android:id="@+id/error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/no_image_to_display"
+            android:textSize="16sp"
+            android:visibility="@{viewModel.photoList.isEmpty() ? View.VISIBLE : View.GONE}"
+            tools:text="There was some error" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh"
