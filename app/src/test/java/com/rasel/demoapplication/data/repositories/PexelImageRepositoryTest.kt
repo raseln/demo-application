@@ -164,7 +164,6 @@ class PexelImageRepositoryTest {
     @Test
     fun when_photo_api_call_fails_with_exception() = runBlockingTest {
         // Arrange
-        val errorBody = ByteArray(0).toResponseBody(null)
         Mockito.`when`(apiService.getPhoto(Mockito.anyInt()))
             .thenThrow(RuntimeException("Invalid"))
 

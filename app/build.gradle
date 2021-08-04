@@ -23,6 +23,7 @@ android {
         debug {
             debuggable true
             minifyEnabled false
+            buildConfigField("String", "SIGNATURE", "null")
         }
         release {
             debuggable false
@@ -35,12 +36,18 @@ android {
     productFlavors {
         dev {
             buildConfigField "String", "PEXEL_BASE_URL", "\"https://api.pexels.com/v1/\""
+            // When keystore file is changed, this value must be changed according to new SHA value of keystore file (SHA1 fingerprint)
+            buildConfigField("String", "SIGNATURE", "\"95:B8:B6:56:8C:6B:37:63:02:5B:1C:60:76:6D:C1:9F:13:A3:28:1A\"")
         }
         stg {
             buildConfigField "String", "PEXEL_BASE_URL", "\"https://api.pexels.com/v1/\""
+            // When keystore file is changed, this value must be changed according to new SHA value of keystore file (SHA1 fingerprint)
+            buildConfigField("String", "SIGNATURE", "\"95:B8:B6:56:8C:6B:37:63:02:5B:1C:60:76:6D:C1:9F:13:A3:28:1A\"")
         }
         prod {
             buildConfigField "String", "PEXEL_BASE_URL", "\"https://api.pexels.com/v1/\""
+            // When keystore file is changed, this value must be changed according to new SHA value of keystore file (SHA1 fingerprint)
+            buildConfigField("String", "SIGNATURE", "\"95:B8:B6:56:8C:6B:37:63:02:5B:1C:60:76:6D:C1:9F:13:A3:28:1A\"")
         }
     }
 
@@ -57,7 +64,10 @@ android {
     }
 
     testOptions {
-        unitTests.returnDefaultValues = true
+        unitTests {
+            returnDefaultValues = true
+            includeAndroidResources = true
+        }
     }
 }
 
@@ -66,17 +76,21 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$app_compat"
     implementation "com.google.android.material:material:$material_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     //Unit test
     testImplementation "junit:junit:$junit_version"
     testImplementation "org.mockito:mockito-core:$mockito_version"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutine_test_version"
     testImplementation "androidx.arch.core:core-testing:$core_test_ver"
+    testImplementation "org.robolectric:robolectric:$robolectric_version"
+    testImplementation 'androidx.test:core:1.4.0'
 
     //Integration test
     androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:$espresso_version"
+    androidTestImplementation 'androidx.test:core:1.4.0'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
 
     //Retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"

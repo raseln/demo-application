@@ -6,6 +6,12 @@ import androidx.lifecycle.Observer
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
+/**
+ * Gets the value of a [LiveData] or waits for it to have one, with a timeout.
+ *
+ * Use this extension from host-side (JVM) tests. It's recommended to use it alongside
+ * `InstantTaskExecutorRule` or a similar mechanism to execute tasks synchronously.
+ */
 fun <T> LiveData<T>.getOrAwaitValue(
     time: Long = 2,
     timeUnit: TimeUnit = TimeUnit.SECONDS,
@@ -28,4 +34,17 @@ fun <T> LiveData<T>.getOrAwaitValue(
         throw RuntimeException("LiveData value was never set.")
     }
     return data as T
+}
+
+/**
+ * Observes a [LiveData] until the `block` is done executing.
+ */
+fun <T> LiveData<T>.observeForTesting(block: () -> Unit) {
+    val observer = Observer<T> { }
+    try {
+        observeForever(observer)
+        block()
+    } finally {
+        removeObserver(observer)
+    }
 }

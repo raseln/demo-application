@@ -3,13 +3,9 @@ package com.rasel.demoapplication.ui
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
-import com.rasel.demoapplication.R
 import com.rasel.demoapplication.data.api.ApiClientManager
 import com.rasel.demoapplication.data.repositories.PexelImageRepository
 import com.rasel.demoapplication.databinding.ActivityFullImageBinding
-import com.rasel.demoapplication.databinding.LayoutImageCellBinding
-import com.rasel.demoapplication.utils.Toaster
 import com.rasel.demoapplication.viewmodels.FullImageViewModel
 import kotlinx.coroutines.Dispatchers
 
